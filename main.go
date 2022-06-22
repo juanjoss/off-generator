@@ -7,15 +7,17 @@ import (
 )
 
 func main() {
-	// registering events
+	/*
+		registering events
+	*/
 	eventProvider := event.NewEventProvider()
 
 	eventProvider.RegisterEvent(&event.ProductOrder{})
 	eventProvider.RegisterEvent(&event.ProductAddedToSSD{})
 	eventProvider.RegisterEvent(&event.UserRegistration{})
 
-	/**
-	launch scheduler to generate random registered events
+	/*
+		launch scheduler to generate random registered events
 	*/
 	gocron.Every(1).Minute().Do(eventProvider.SelectEvent)
 

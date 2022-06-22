@@ -10,10 +10,14 @@ import (
 	"os"
 )
 
-var addProductSsdEndpoint = os.Getenv("SERVICE_HOST") + "/api/users/ssds/products"
+var (
+	addProductSsdEndpoint = os.Getenv("USERS_SERVICE") + "/ssds/products"
+	randonSsdEndpoint     = os.Getenv("USERS_SERVICE") + "/ssds/random"
 
-type ProductAddedToSSD struct {
-}
+	randomProductEndpoint = os.Getenv("ORDERS_SERVICE") + "/random"
+)
+
+type ProductAddedToSSD struct{}
 
 type ProductAddedToSSDRequest struct {
 	SsdId    int    `json:"ssd_id"`
@@ -26,10 +30,10 @@ func (passd *ProductAddedToSSD) Handle() {
 		Quantity: rand.Intn(5),
 	}
 
-	/**
-	get random product
+	/*
+		getting a random product
 	*/
-	res, err := http.Get(os.Getenv("SERVICE_HOST") + "/api/products/random")
+	res, err := http.Get(randomProductEndpoint)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -47,10 +51,10 @@ func (passd *ProductAddedToSSD) Handle() {
 		panic(err.Error())
 	}
 
-	/**
-	get random ssd
+	/*
+		getting a random device
 	*/
-	res, err = http.Get(os.Getenv("SERVICE_HOST") + "/api/users/ssds/random")
+	res, err = http.Get(randonSsdEndpoint)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -68,8 +72,8 @@ func (passd *ProductAddedToSSD) Handle() {
 		panic(err.Error())
 	}
 
-	/**
-	send to service
+	/*
+		send request to users service
 	*/
 	jsonData, err := json.Marshal(request)
 	if err != nil {
@@ -86,13 +90,9 @@ func (passd *ProductAddedToSSD) Handle() {
 	}
 
 	if res.StatusCode != http.StatusOK {
-		log.Println("event failed")
+		log.Println("event", passd.Type(), "failed")
 		return
 	}
-
-	var resBody map[string]any
-	json.NewDecoder(res.Body).Decode(&resBody)
-	log.Println(resBody)
 }
 
 func (passd *ProductAddedToSSD) Type() string {
