@@ -23,7 +23,7 @@ func main() {
 	*/
 	s := gocron.NewScheduler(time.UTC)
 
-	s.Every(1).Second().Do(eventProvider.SelectEvent)
+	s.Every(1).Minute().Do(eventProvider.SelectEvent)
 
 	s.StartBlocking()
 }
