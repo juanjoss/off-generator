@@ -21,7 +21,6 @@ type ProductOrderRequest struct {
 	SsdId    int    `json:"ssd_id"`
 	Barcode  string `json:"barcode"`
 	Quantity int    `json:"quantity"`
-	Status   string `json:"status"`
 }
 
 func (pr *ProductOrder) Handle() {
@@ -42,8 +41,16 @@ func (pr *ProductOrder) Handle() {
 	if err != nil {
 		panic(err.Error())
 	}
-	request.Quantity = rand.Intn(5)
-	request.Status = ""
+	request.Quantity = rand.Intn(4) + 1
+
+	/*
+		if no products have been added to a device, or no user registrations
+		happend, then there can't be a product order.
+	*/
+	if request.SsdId == 0 {
+		log.Println("aborting event", pr.Type(), "due to no previous user-registration or add-product-to-ssd events.")
+		return
+	}
 
 	/*
 		send request to orders service

@@ -10,21 +10,21 @@ type Event interface {
 	Type() string
 }
 
-type EventProvider struct {
+type eventProvider struct {
 	events []Event
 }
 
-func NewEventProvider() *EventProvider {
-	return &EventProvider{
+func NewEventProvider() *eventProvider {
+	return &eventProvider{
 		events: []Event{},
 	}
 }
 
-func (ep *EventProvider) RegisterEvent(e Event) {
+func (ep *eventProvider) RegisterEvent(e Event) {
 	ep.events = append(ep.events, e)
 }
 
-func (ep *EventProvider) SelectEvent() {
+func (ep *eventProvider) SelectEvent() {
 	index := rand.Intn(len(ep.events))
 	event := ep.events[index]
 	log.Println(event.Type())

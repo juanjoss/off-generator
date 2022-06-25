@@ -1,9 +1,11 @@
 package main
 
 import (
+	"time"
+
 	"github.com/juanjoss/off-generator/event"
 
-	"github.com/jasonlvhit/gocron"
+	"github.com/go-co-op/gocron"
 )
 
 func main() {
@@ -19,7 +21,9 @@ func main() {
 	/*
 		launch scheduler to generate random registered events
 	*/
-	gocron.Every(1).Minute().Do(eventProvider.SelectEvent)
+	s := gocron.NewScheduler(time.UTC)
 
-	<-gocron.Start()
+	s.Every(1).Second().Do(eventProvider.SelectEvent)
+
+	s.StartBlocking()
 }
